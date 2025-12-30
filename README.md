@@ -1,5 +1,7 @@
 # Wallet Lab
 
+English | [简体中文](README.zh-CN.md)
+
 A React + TypeScript + Vite frontend application integrated with ethers.js v6 and Zustand for Ethereum wallet functionality.
 
 ## Features
