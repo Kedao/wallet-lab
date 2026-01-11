@@ -1,7 +1,11 @@
 import { useWalletStore } from '@/stores'
 import { CHAIN_IDS, CHAIN_NAMES } from '@/config/constants'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
 
 function Welcome() {
+  const navigate = useNavigate()
   const { address, chainId, isConnected } = useWalletStore()
 
   return (
@@ -20,11 +24,16 @@ function Welcome() {
 
           {/* Main Card */}
           <div className="bg-card border rounded-lg shadow-lg p-8 space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">Welcome to Wallet Lab</h2>
-              <p className="text-muted-foreground">
-                A modern frontend application for Ethereum wallet functionality.
-              </p>
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-semibold">Welcome to Wallet Lab</h2>
+                <p className="text-muted-foreground">
+                  A modern frontend application for Ethereum wallet functionality.
+                </p>
+              </div>
+              <Button onClick={() => navigate('/generate')} className="gap-2">
+                Start Lab <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
 
             {/* Status Section */}
