@@ -1,7 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { ArrowRight, Binary } from 'lucide-react'
+import { StepLayout } from './StepLayout'
 import { WalletData } from './types'
+import { Binary, Flame } from 'lucide-react'
 
 interface SeedStepProps {
   data: WalletData
@@ -10,49 +9,59 @@ interface SeedStepProps {
 
 export function SeedStep({ data, onNext }: SeedStepProps) {
   return (
-    <Card className="w-full max-w-4xl mx-auto border-l-8 border-l-orange-500 shadow-xl">
-      <CardHeader>
-         <div className="flex items-center gap-4 mb-2">
-           <div className="p-3 bg-orange-100 dark:bg-orange-900/40 rounded-xl">
-             <Binary className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-           </div>
-           <div>
-             <CardTitle className="text-2xl">Step 3: Master Seed</CardTitle>
-             <CardDescription className="text-base">PBKDF2 Hashing (512 bits)</CardDescription>
-           </div>
-         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
-          <p className="text-xs text-slate-500 mb-2 font-mono uppercase">Output seed (Hex)</p>
-          <div className="font-mono text-sm break-all text-orange-300 dark:text-orange-400 leading-6 tracking-wide">
-             {data.seed}
-          </div>
+    <StepLayout
+      title="PBKDF2 Hashing"
+      subtitle="Key Stretching & Salt Integration"
+      icon={Binary}
+      color="yellow"
+      onNext={onNext}
+      nextLabel="Derive Keys"
+    >
+      <div className="space-y-4 h-full flex flex-col justify-center">
+        {/* Reactor Core Visual - Compact */}
+        <div className="relative p-4 border border-yellow-500/20 bg-yellow-900/10 rounded-lg flex flex-col items-center text-center">
+             <div className="absolute top-2 right-2 flex gap-1">
+                 <div className="w-1 h-1 bg-yellow-500 rounded-full animate-ping" />
+                 <div className="w-1 h-1 bg-yellow-500 rounded-full animate-ping delay-75" />
+             </div>
+             
+             <div className="flex items-center gap-3 mb-2">
+                <Flame className="w-6 h-6 text-yellow-500 animate-pulse opacity-80" />
+                <h3 className="text-yellow-400 font-mono text-base font-bold">HMAC-SHA512 Reactor</h3>
+             </div>
+             <p className="text-yellow-200/60 text-xs max-w-lg">
+                2048 rounds of hashing entropy + "mnemonic" salt. Brute-force resistant.
+             </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-100 dark:border-orange-900">
-             <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">Hashing Function</h4>
-             <p className="text-sm text-orange-800 dark:text-orange-200">
-               We used <b>PBKDF2</b> (Password-Based Key Derivation Function 2) with HMAC-SHA512.
-             </p>
-          </div>
-          <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-100 dark:border-orange-900">
-             <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">Hardening</h4>
-             <p className="text-sm text-orange-800 dark:text-orange-200">
-               The process includes <b>2048 rounds</b> of hashing to make brute-force attacks computationally expensive.
-             </p>
-          </div>
+        {/* Master Seed Display */}
+        <div className="space-y-2 flex-1 flex flex-col justify-center">
+             <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 px-1">
+                 <span>OUTPUT_BUFFER</span>
+                 <span>512-BIT</span>
+             </div>
+             <div className="break-all bg-black border border-slate-700 p-4 rounded-md font-mono text-xs md:text-sm leading-relaxed text-slate-300 relative shadow-inner group overflow-hidden">
+                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-50" />
+                 {data.seed}
+                 <span className="inline-block w-2 h-3 bg-yellow-500 ml-1 animate-pulse" />
+             </div>
         </div>
-      </CardContent>
-      <CardFooter className="justify-between border-t bg-muted/20 p-6">
-        <div className="text-sm text-muted-foreground">
-          Next: Derive Account Keys
+
+        {/* Technical Specs Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-auto">
+            {[
+                { label: "ALGORITHM", value: "PBKDF2" },
+                { label: "ROUNDS", value: "2048" },
+                { label: "HASH", value: "SHA512" },
+                { label: "SIZE", value: "64 B" }
+            ].map((spec, i) => (
+                <div key={i} className="bg-slate-800/40 border border-slate-700 p-2 rounded flex flex-col items-center justify-center">
+                    <span className="text-[9px] text-slate-500 tracking-wider mb-0.5">{spec.label}</span>
+                    <span className="text-xs font-bold text-yellow-500 font-mono">{spec.value}</span>
+                </div>
+            ))}
         </div>
-         <Button onClick={onNext} size="lg" className="gap-2">
-          Derive Keys <ArrowRight className="w-4 h-4" />
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </StepLayout>
   )
 }

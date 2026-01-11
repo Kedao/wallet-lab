@@ -138,7 +138,7 @@ export function EntropyVisualizer({ paused }: EntropyVisualizerProps) {
        }
     }
 
-    const drawPCB = (width: number, height: number) => {
+    const drawPCB = () => {
         // Draw static connecting lines (Traces)
         ctx.lineCap = 'round'
         ctx.lineJoin = 'round'
@@ -224,7 +224,7 @@ export function EntropyVisualizer({ paused }: EntropyVisualizerProps) {
       ctx.globalCompositeOperation = 'source-over'
 
       // 2. Draw PCB Background & Signals
-      drawPCB(canvas.width, canvas.height)
+      drawPCB()
 
       // 3. Draw Oscilloscope (Noise)
       // Even if paused, we draw the oscilloscope to show the "captured" noise state

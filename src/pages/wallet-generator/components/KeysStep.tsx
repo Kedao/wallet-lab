@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { RefreshCw, Key, Lock, CheckCircle2 } from 'lucide-react'
+import { StepLayout } from './StepLayout'
 import { WalletData } from './types'
+import { Key, RotateCcw, Copy, Fingerprint, Lock } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 
 interface KeysStepProps {
   data: WalletData
@@ -9,73 +10,93 @@ interface KeysStepProps {
 }
 
 export function KeysStep({ data, onReset }: KeysStepProps) {
+  const [revealed, setRevealed] = useState(false)
+
   return (
-    <Card className="w-full max-w-4xl mx-auto border-l-8 border-l-green-500 shadow-xl">
-      <CardHeader>
-        <div className="flex items-center gap-4 mb-2">
-           <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-xl">
-             <Key className="w-8 h-8 text-green-600 dark:text-green-400" />
-           </div>
-           <div>
-             <CardTitle className="text-2xl">Step 4: Identity & Keys</CardTitle>
-             <CardDescription className="text-base">Address generation complete</CardDescription>
-           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-8">
+    <StepLayout
+      title="Key Derivation"
+      subtitle="BIP-32 / BIP-44 Hierarchical Deterministic"
+      icon={Key}
+      color="green"
+      footerContent={(
+          <Button onClick={onReset} variant="destructive" className="w-full bg-red-900/50 hover:bg-red-800 text-red-100 border border-red-500/30">
+             <RotateCcw className="mr-2 w-4 h-4" /> Reset & Destroy Keys
+          </Button>
+      )}
+    >
+      <div className="space-y-4 h-full flex flex-col justify-center">
         
-        {/* Path Info */}
-        <div className="flex items-center gap-2 p-2 px-4 bg-slate-100 dark:bg-slate-800 rounded-full w-fit mx-auto text-sm font-mono text-slate-500">
-           <span>Derivation Path:</span>
-           <span className="text-foreground font-bold">{data.path}</span>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-           {/* Private Key Section */}
-           <div className="space-y-3">
-             <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                <Lock className="w-4 h-4" />
-                <h3 className="font-semibold">Private Key</h3>
+        {/* Derivation Path HUD */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-3 bg-slate-800/50 rounded border border-slate-700 gap-2">
+             <div className="flex items-center gap-2">
+                 <GitMergeIcon className="text-purple-400 w-5 h-5" />
+                 <div>
+                    <label className="text-[9px] text-slate-500 font-mono block uppercase">Derivation Path</label>
+                    <code className="text-purple-300 font-mono font-bold text-base">{data.path}</code>
+                 </div>
              </div>
-             <div className="group relative">
-               <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg break-all font-mono text-sm text-red-800 dark:text-red-300 blur-sm group-hover:blur-0 transition-all duration-300">
-                  {data.privateKey}
-               </div>
-               <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity">
-                  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-red-200">
-                    HOVER TO REVEAL
-                  </span>
-               </div>
+             <div className="text-[10px] text-slate-500 text-right font-mono hidden md:block">
+                 m / purpose' / coin_type' / account' / change / index
              </div>
-             <p className="text-xs text-muted-foreground">
-               This 256-bit integer signs transactions. Never share this.
-             </p>
-           </div>
-
-           {/* Public Address Section */}
-           <div className="space-y-3">
-              <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                <CheckCircle2 className="w-4 h-4" />
-                <h3 className="font-semibold">Public Address</h3>
-              </div>
-              <div className="p-4 bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-900/50 rounded-lg break-all font-mono text-xl font-bold text-green-800 dark:text-green-300">
-                 {data.address}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Last 20 bytes of the public key's keccak256 hash. Safe to share.
-              </p>
-           </div>
         </div>
 
-      </CardContent>
-      <CardFooter className="justify-between border-t bg-muted/20 p-6">
-        <div className="text-sm text-muted-foreground">
-           Process Complete
+        {/* Public Address (Identity) */}
+        <div className="space-y-1.5 flex-1 flex flex-col justify-center">
+            <div className="flex items-center gap-2 text-green-400 font-mono text-xs font-bold uppercase tracking-wider">
+                <Fingerprint className="w-3.5 h-3.5" /> Public Identity (Address)
+            </div>
+            <div className="bg-green-900/10 border border-green-500/30 p-4 rounded-lg relative overflow-hidden group">
+                 <div className="absolute top-2 right-2 opacity-50">
+                    <Copy className="w-4 h-4 text-green-500 cursor-pointer hover:text-green-300 transition-colors" />
+                 </div>
+                 <code className="text-sm md:text-xl font-mono text-green-400 break-all drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]">
+                    {data.address}
+                 </code>
+                 <div className="mt-2 flex gap-4 text-[10px] text-green-700/80 font-mono uppercase">
+                     <span>Network: Ethereum</span>
+                     <span>Type: EOA</span>
+                 </div>
+            </div>
         </div>
-        <Button onClick={onReset} variant="outline" size="lg" className="gap-2">
-           <RefreshCw className="w-4 h-4" /> Start Over
-        </Button>
-      </CardFooter>
-    </Card>
+
+        {/* Private Key (Secret) */}
+        <div className="space-y-1.5 mt-auto">
+            <div className="flex items-center gap-2 text-red-400 font-mono text-xs font-bold uppercase tracking-wider">
+                <Lock className="w-3.5 h-3.5" /> Private Key (Top Secret)
+            </div>
+            <div 
+                className="relative bg-red-950/20 border border-red-500/20 p-4 rounded-lg overflow-hidden cursor-pointer group"
+                onMouseEnter={() => setRevealed(true)}
+                onMouseLeave={() => setRevealed(false)}
+            >
+                 {/* Danger Stripes Background */}
+                 <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000, #000 10px, #ef4444 10px, #ef4444 20px)' }} />
+
+                 <div className="relative z-10 transition-all duration-300">
+                     <code className={`block text-sm md:text-lg font-mono break-all text-red-400 transition-filter duration-300 ${revealed ? 'blur-0' : 'blur-md select-none'}`}>
+                        {data.privateKey}
+                     </code>
+                 </div>
+                 
+                 {/* Overlay Text */}
+                 <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 pointer-events-none ${revealed ? 'opacity-0' : 'opacity-100'}`}>
+                      <span className="bg-red-900/80 text-red-100 px-3 py-1 rounded border border-red-500/50 text-xs font-bold tracking-widest shadow-xl backdrop-blur-sm">
+                          HOVER TO REVEAL
+                      </span>
+                 </div>
+            </div>
+            <p className="text-[10px] text-red-400/60 text-center font-mono mt-2">
+                WARNING: NEVER SHARE THIS KEY. ANYONE WITH THIS KEY CONTROLS YOUR FUNDS.
+            </p>
+        </div>
+
+      </div>
+    </StepLayout>
   )
+}
+
+function GitMergeIcon({ className }: { className?: string }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>
+    )
 }
