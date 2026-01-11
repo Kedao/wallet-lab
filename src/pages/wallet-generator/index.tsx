@@ -30,7 +30,7 @@ export default function WalletGenerator() {
   const generateWallet = async () => {
     setIsGenerating(true)
     // Small delay for UX
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise(resolve => setTimeout(resolve, 200))
 
     try {
       // 1. Generate Entropy
@@ -170,7 +170,11 @@ export default function WalletGenerator() {
               exit="exit"
                className="absolute w-full"
             >
-              <EntropyStep data={walletData} onNext={handleNext} />
+              <EntropyStep 
+                data={walletData} 
+                onNext={handleNext} 
+                onRegenerate={generateWallet}
+              />
             </motion.div>
           ) : currentStep === 1 && walletData ? (
             <motion.div 
